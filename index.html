@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PickWise ✨ - Smart Decisions, Stylish Choices</title>
+    <style>
+        :root {
+            --primary: #ff758c;
+            --primary-gradient: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            --secondary: #b19ffb;
+            --bg: #faf7f9;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --accent: #ff8ea5;
+            --shadow: 0 8px 25px rgba(255, 117, 140, 0.08);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 85px;
+        }
+
+        /* Qeydiyyat / Giriş Ekranı (Auth Screen) */
+        #auth-screen {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            background: linear-gradient(135deg, #fff0f3 0%, #f7f0ff 100%);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 15px 35px rgba(255, 117, 140, 0.15);
+            text-align: center;
+            border: 1px solid #f0e6ed;
+        }
+
+        .auth-card .logo-large {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .auth-card p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 22px;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #f0e6ed;
+            background: #faf7f9;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .auth-card input:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.3);
+            transition: 0.2s;
+        }
+
+        .auth-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
+        }
+
+        .auth-error {
+            color: #ff4757;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        /* Header & Navigation Header */
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #f0e6ed;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-stats {
+            background: #fff0f3;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 0 15px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #f0e6ed;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: #a0a0a0;
+            cursor: pointer;
+            border: none;
+            background: none;
+            flex: 1;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 2px;
+            right: 25%;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Feed / Card Style */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid #f5ecf2;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b19ffb 0%, #ffd3b6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #fff0f3;
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .question {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .option-card {
+            border: 2px solid #f5ecf2;
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+            background: #faf7f9;
+        }
+
+        .option-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .vote-btn {
+            width: 100%;
+            padding: 9px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .vote-btn.selected {
+            background: #8a5cf5;
+            box-shadow: 0 2px 10px rgba(138, 92, 245, 0.3);
+        }
+
+        .vote-btn:disabled {
+            background: #e0e0e0;
+            cursor: not-allowed;
+            color: #888;
+        }
+
+        .comments-section {
+            border-top: 1px solid #f5ecf2;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .comment-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .comment-input-group input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #f0e6ed;
+            background: #faf7f9;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .comment-input-group button {
+            padding: 8px 14px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Explore / Search */
+        .search-box {
+            width: 100%;
+            padding: 12px 18px;
+            border: 1px solid #f0e6ed;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            outline: none;
+            box-shadow: var(--shadow);
+        }
+
+        .category-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .pill {
+            background: white;
+            border: 1px solid #f0e6ed;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .pill.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Notifications (Two sections) */
+        .notif-sub-tabs {
+            display: flex;
+            background: #f0e6ed;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .notif-tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .notif-tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f9f2f6;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #fff0f3;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notif-btn {
+            padding: 5px 12px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Chat Window */
+        .chat-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid #f5ecf2;
+        }
+
+        .chat-box {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            border: 1px solid #f0e6ed;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #faf7f9;
+        }
+
+        .msg {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .msg.sent {
+            background: var(--primary-gradient);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .msg.received {
+            background: white;
+            border: 1px solid #f0e6ed;
+            align-self: flex-start;
+        }
+
+        /* Profile */
+        .profile-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.3);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #f0e8ff;
+            color: #8a5cf5;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .friends-clickable {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .friends-clickable:hover {
+            transform: translateY(-2px);
+        }
+
+        .settings-group {
+            margin-top: 12px;
+            border-top: 1px solid #f5ecf2;
+            padding-top: 12px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f9f2f6;
+            font-size: 13px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 11px;
+            background: #ffe8ec;
+            color: #ff4757;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* Modal Overlay */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 22px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 420px;
+        }
+
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #f0e6ed;
+            background: #faf7f9;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .file-input-label {
+            display: block;
+            background: #fff0f3;
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px dashed var(--accent);
+        }
+
+        .create-poll-btn {
+            position: fixed;
+            bottom: 78px;
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            font-size: 26px;
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
+            cursor: pointer;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- QEYDİYYAT / GİRİŞ EKRANI (BƏRPA OLUNMUŞ) -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="logo-large">PickWise ✨</div>
+            <p>Smart Decisions, Stylish Choices!</p>
+            
+            <div id="auth-error" class="auth-error">Please enter a valid username!</div>
+            
+            <input type="text" id="username-input" placeholder="Enter your username..." onkeydown="if(event.key==='Enter') login()">
+            <button onclick="login()">Get Started ✨</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">PickWise ✨</div>
+        <div class="user-stats">⭐ <span id="user-points">50</span> P</div>
+    </header>
+
+    <div class="container">
+        <!-- 1. HOME / FEED -->
+        <div id="feed" class="tab-content active">
+            <div id="posts-container"></div>
+        </div>
+
+        <!-- 2. DISCOVER / EXPLORE -->
+        <div id="explore" class="tab-content">
+            <input type="text" class="search-box" id="explore-search" placeholder="🔍 Search decisions, trends or topics..." onkeyup="filterExplore(this.value)">
+            <div class="category-pills" id="explore-pills">
+                <div class="pill active" onclick="filterCategory('All', this)">All</div>
+                <div class="pill" onclick="filterCategory('Trending', this)">🔥 Trending</div>
+                <div class="pill" onclick="filterCategory('Fashion', this)">👗 Fashion</div>
+                <div class="pill" onclick="filterCategory('Tech', this)">📱 Tech</div>
+                <div class="pill" onclick="filterCategory('Travel', this)">✈️ Travel</div>
+                <div class="pill" onclick="filterCategory('Fun', this)">🎉 Fun</div>
+                <div class="pill" onclick="filterCategory('Beauty', this)">💄 Beauty</div>
+            </div>
+            
+            <div id="explore-polls-container"></div>
+        </div>
+
+        <!-- 3. ALERTS / NOTIFICATIONS (TWO SECTIONS) -->
+        <div id="notifications" class="tab-content">
+            <div class="card">
+                <h3 style="font-size:16px; margin-bottom:12px;">Notifications 🔔</h3>
+                
+                <div class="notif-sub-tabs">
+                    <button class="notif-tab-btn active" onclick="switchNotifTab('social-notifs', this)">Social & Friends</button>
+                    <button class="notif-tab-btn" onclick="switchNotifTab('suggest-notifs', this)">Suggestions</button>
+                </div>
+
+                <!-- Section 1: Social & Friends -->
+                <div id="social-notifs" class="notif-section">
+                    <div class="notif-item">
+                        <div class="notif-icon">👤</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px;"><strong>Leyla K.</strong> sent you a friend request.</div>
+                            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">10m ago</div>
+                        </div>
+                        <button class="notif-btn" onclick="this.innerText='Accepted'; this.disabled=true;">Accept</button>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon">📝</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px;">Your friend <strong>Aysel M.</strong> posted a new poll!</div>
+                            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">1h ago</div>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon">💬</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px;"><strong>Elcan K.</strong> commented on your decision.</div>
+                            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">3h ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Suggestions -->
+                <div id="suggest-notifs" class="notif-section" style="display: none;">
+                    <div class="notif-item">
+                        <div class="notif-icon">✨</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px;">You have <strong>92% Vibe Match</strong> with Nərmin A.!</div>
+                            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">Suggested for you</div>
+                        </div>
+                        <button class="notif-btn" onclick="startChat('Nərmin A.')">Chat</button>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon">🔥</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px;">Check out this trending poll in <strong>Fashion</strong> category!</div>
+                            <div style="font-size: 11px; color: #aaa; margin-top: 2px;">Popular now</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. CHATS / MESSAGES -->
+        <div id="messages" class="tab-content">
+            <div id="chat-list">
+                <h3 style="font-size:16px; margin-bottom: 12px;">Messages 💬</h3>
+                <div id="active-chats"></div>
+            </div>
+
+            <div class="chat-box" id="chat-box">
+                <button style="border: none; background: none; color: var(--primary); font-weight:bold; cursor: pointer; margin-bottom: 10px;" onclick="closeChat()">← Back to Messages</button>
+                <h4 id="chat-user-name" style="margin-bottom: 10px; font-size:15px;">Chat</h4>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="chat-input" placeholder="Type a message..." style="flex:1; padding: 10px; border:1px solid #f0e6ed; border-radius:8px; outline:none; font-size:13px;" onkeydown="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" style="padding: 10px 16px; background: var(--primary-gradient); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight:bold;">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. PROFILE -->
+        <div id="profile" class="tab-content">
+            <div class="card profile-header">
+                <div class="profile-avatar" id="profile-avatar">U</div>
+                <h2 id="profile-name" style="font-size: 20px;">User</h2>
+                <span class="badge" id="profile-rank">🌟 Decision Newbie</span>
+                
+                <div style="display: flex; justify-content: space-around; margin-top: 18px; padding-top: 12px; border-top: 1px solid #f5ecf2;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: bold; color: var(--primary);" id="profile-points">50 P</div>
+                        <div style="font-size: 11px; color: #888;">Points</div>
+                    </div>
+                    <div class="friends-clickable" onclick="openFriendsModal()">
+                        <div style="font-size: 18px; font-weight: bold; color: var(--primary);">14</div>
+                        <div style="font-size: 11px; color: #888;">Friends 👥</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size:15px;">Settings ⚙️️</h3>
+                <div class="settings-group">
+                    <div class="settings-item">
+                        <span>Notifications</span>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div class="settings-item">
+                        <span>Private Profile</span>
+                        <input type="checkbox">
+                    </div>
+                    <div class="settings-item">
+                        <span>Language</span>
+                        <strong>English 🇬🇧</strong>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Poll Floating Action Button -->
+    <button class="create-poll-btn" onclick="openModal()">+</button>
+
+    <!-- Create Poll Modal -->
+    <div class="modal" id="pollModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 12px; font-size: 16px;">Create New Decision Poll</h3>
+            <input type="text" id="pollQuestion" placeholder="What decision do you need help with?">
+            <select id="pollCategory">
+                <option value="Fashion">Fashion</option>
+                <option value="Tech">Tech</option>
+                <option value="Travel">Travel</option>
+                <option value="Beauty">Beauty</option>
+                <option value="Fun">Fun</option>
+            </select>
+
+            <label class="file-input-label">
+                📷 Select Option A Image
+                <input type="file" id="file1" accept="image/*" style="display:none;" onchange="handleFileSelect(this, 'preview1')">
+            </label>
+            <div id="preview1" style="font-size: 11px; color: green; margin-bottom: 5px;"></div>
+
+            <label class="file-input-label">
+                📷 Select Option B Image
+                <input type="file" id="file2" accept="image/*" style="display:none;" onchange="handleFileSelect(this, 'preview2')">
+            </label>
+            <div id="preview2" style="font-size: 11px; color: green; margin-bottom: 5px;"></div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                <button style="padding: 8px 15px; border: none; background: #eee; border-radius: 8px; cursor: pointer; font-size:13px;" onclick="closeModal()">Cancel</button>
+                <button style="padding: 8px 15px; border: none; background: var(--primary-gradient); color: white; border-radius: 8px; cursor: pointer; font-size:13px; font-weight:bold;" onclick="createPoll()">Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends Modal -->
+    <div class="modal" id="friendsModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="font-size: 16px;">Your Friends (14) 👥</h3>
+                <button style="border: none; background: none; font-size: 18px; cursor: pointer;" onclick="closeFriendsModal()">✕</button>
+            </div>
+            <div style="max-height: 250px; overflow-y: auto;">
+                <div class="notif-item">
+                    <div class="avatar" style="width:34px; height:34px; font-size:12px;">L</div>
+                    <div style="flex:1;">
+                        <strong style="font-size: 13px;">Leyla K.</strong>
+                        <div style="font-size: 11px; color:#888;">Vibe Master</div>
+                    </div>
+                </div>
+                <div class="notif-item">
+                    <div class="avatar" style="width:34px; height:34px; font-size:12px; background:#ffd3b6;">A</div>
+                    <div style="flex:1;">
+                        <strong style="font-size: 13px;">Aysel M.</strong>
+                        <div style="font-size: 11px; color:#888;">Decision Legend</div>
+                    </div>
+                </div>
+                <div class="notif-item">
+                    <div class="avatar" style="width:34px; height:34px; font-size:12px; background:#b19ffb;">E</div>
+                    <div style="flex:1;">
+                        <strong style="font-size: 13px;">Elcan K.</strong>
+                        <div style="font-size: 11px; color:#888;">Vibe Master</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar (5 Items) -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchNav('feed', this)">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('explore', this)">
+            <span class="nav-icon">🔍</span>
+            <span>Discover</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('notifications', this)">
+            <span class="nav-icon">🔔</span>
+            <span class="badge-dot"></span>
+            <span>Alerts</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('messages', this)">
+            <span class="nav-icon">💬</span>
+            <span>Chats</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('profile', this)">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </button>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem('pw_user') || null;
+        let points = parseInt(localStorage.getItem('pw_points')) || 50;
+        let img1Base64 = "";
+        let img2Base64 = "";
+        let selectedCategory = "All";
+        let searchQuery = "";
+
+        const defaultPosts = [
+            {
+                id: 'post-1',
+                author: 'Aysel M.',
+                category: 'Fashion',
+                question: 'Which outfit should I choose for tonight’s event? 👗',
+                img1: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400',
+                img2: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400',
+                votesA: 24,
+                votesB: 31,
+                voted: false,
+                selectedOption: null,
+                comments: ['Leyla: Black is always classic!']
+            }
+        ];
+
+        const defaultExplorePolls = [
+            {
+                id: 'explore-1',
+                title: '🔥 Top Decision of the Week',
+                author: 'PickWise Trends',
+                category: 'Tech',
+                question: 'iPhone 15 Pro vs Samsung Galaxy S24 Ultra? 📱',
+                optionA: 'iPhone 15 Pro',
+                optionB: 'Samsung S24 Ultra',
+                img1: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400',
+                img2: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400',
+                votesA: 642,
+                votesB: 598,
+                voted: false,
+                selectedOption: null,
+                matchRate: '88% Match'
+            },
+            {
+                id: 'explore-2',
+                title: '✈️ Trending Vacation Poll',
+                author: 'Traveler_Sam',
+                category: 'Travel',
+                question: 'Summer Trip: Tropical Bali or Historic Rome? 🏖️',
+                optionA: 'Bali Beach',
+                optionB: 'Rome City',
+                img1: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400',
+                img2: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400',
+                votesA: 180,
+                votesB: 210,
+                voted: false,
+                selectedOption: null,
+                matchRate: '94% Match'
+            },
+            {
+                id: 'explore-3',
+                title: '💄 Beauty Choice',
+                author: 'Nigar_Styles',
+                category: 'Beauty',
+                question: 'Nude Glow vs Bold Red Lip Look? 💄',
+                optionA: 'Nude Glow',
+                optionB: 'Bold Red',
+                img1: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400',
+                img2: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
+                votesA: 95,
+                votesB: 120,
+                voted: false,
+                selectedOption: null,
+                matchRate: '79% Match'
+            }
+        ];
+
+        let posts = JSON.parse(localStorage.getItem('pw_posts')) || defaultPosts;
+        let explorePolls = JSON.parse(localStorage.getItem('pw_explore_polls')) || defaultExplorePolls;
+
+        window.onload = function() {
+            if (currentUser) {
+                document.getElementById('auth-screen').style.display = 'none';
+                initApp();
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+            }
+        };
+
+        function login() {
+            const nameInput = document.getElementById('username-input');
+            const errorMsg = document.getElementById('auth-error');
+            const name = nameInput.value.trim();
+
+            if (name.length >= 2) {
+                errorMsg.style.display = 'none';
+                currentUser = name;
+                localStorage.setItem('pw_user', currentUser);
+                document.getElementById('auth-screen').style.display = 'none';
+                initApp();
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('pw_user');
+            location.reload();
+        }
+
+        function initApp() {
+            updatePoints();
+            renderPosts();
+            renderExplorePolls();
+            renderChats();
+            document.getElementById('profile-name').innerText = currentUser;
+            document.getElementById('profile-avatar').innerText = currentUser.charAt(0).toUpperCase();
+        }
+
+        function switchNav(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function switchNotifTab(sectionId, btn) {
+            document.querySelectorAll('.notif-section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId).style.display = 'block';
+            btn.classList.add('active');
+        }
+
+        function handleFileSelect(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewId === 'preview1') img1Base64 = e.target.result;
+                    if (previewId === 'preview2') img2Base64 = e.target.result;
+                    document.getElementById(previewId).innerText = "✓ Selected: " + file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '';
+
+            posts.forEach(post => {
+                const totalVotes = (post.votesA || 0) + (post.votesB || 0);
+                const percentA = totalVotes > 0 ? Math.round(((post.votesA || 0) / totalVotes) * 100) : 50;
+                const percentB = totalVotes > 0 ? 100 - percentA : 50;
+
+                const postHTML = `
+                    <div class="card" id="${post.id}">
+                        <div class="user-info">
+                            <div class="avatar">${post.author.charAt(0)}</div>
+                            <div>
+                                <strong>${post.author}</strong>
+                                <div><span class="category-badge">${post.category}</span></div>
+                            </div>
+                        </div>
+                        <div class="question">${post.question}</div>
+                        <div class="options-grid">
+                            <div class="option-card">
+                                <img src="${post.img1}" alt="Option A">
+                                <button class="vote-btn ${post.selectedOption === 'A' ? 'selected' : ''}" ${post.voted ? 'disabled' : ''} onclick="voteFeed('${post.id}', 'A')">
+                                    ${post.voted ? `Option A (${percentA}%)` : 'Option A'}
+                                </button>
+                            </div>
+                            <div class="option-card">
+                                <img src="${post.img2}" alt="Option B">
+                                <button class="vote-btn ${post.selectedOption === 'B' ? 'selected' : ''}" ${post.voted ? 'disabled' : ''} onclick="voteFeed('${post.id}', 'B')">
+                                    ${post.voted ? `Option B (${percentB}%)` : 'Option B'}
+                                </button>
+                            </div>
+                        </div>
+                        ${post.voted ? `<div style="text-align:center; font-size:12px; color:var(--primary); font-weight:bold; margin-bottom:10px;">✓ Voted! Total votes: ${totalVotes}</div>` : ''}
+                        <div class="comments-section">
+                            <div class="comment-list">
+                                ${post.comments.map(c => `<div style="font-size:12px; margin-bottom:4px;">${c}</div>`).join('')}
+                            </div>
+                            <div class="comment-input-group">
+                                <input type="text" placeholder="Write a comment...">
+                                <button onclick="addComment(this, '${post.id}')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += postHTML;
+            });
+        }
+
+        function renderExplorePolls() {
+            const container = document.getElementById('explore-polls-container');
+            container.innerHTML = '';
+
+            const filtered = explorePolls.filter(poll => {
+                const matchesCat = (selectedCategory === "All" || selectedCategory === "Trending" || poll.category === selectedCategory);
+                const matchesSearch = poll.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      poll.title.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#999; padding:20px; font-size:14px;">No polls found for this filter.</div>`;
+                return;
+            }
+
+            filtered.forEach(poll => {
+                const total = (poll.votesA || 0) + (poll.votesB || 0);
+                const percA = total > 0 ? Math.round(((poll.votesA || 0) / total) * 100) : 50;
+                const percB = total > 0 ? 100 - percA : 50;
+
+                const pollHTML = `
+                    <div class="card" id="${poll.id}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <h3 style="font-size:15px; color:var(--primary);">${poll.title}</h3>
+                            <span class="category-badge">${poll.category}</span>
+                        </div>
+                        <p style="font-size:14px; font-weight: 600; margin-bottom: 12px;">${poll.question}</p>
+                        
+                        <div class="options-grid">
+                            <div class="option-card">
+                                <img src="${poll.img1}" alt="${poll.optionA}">
+                                <button class="vote-btn ${poll.selectedOption === 'A' ? 'selected' : ''}" ${poll.voted ? 'disabled' : ''} onclick="voteExplore('${poll.id}', 'A')">
+                                    ${poll.voted ? `${poll.optionA} (${percA}%)` : poll.optionA}
+                                </button>
+                            </div>
+                            <div class="option-card">
+                                <img src="${poll.img2}" alt="${poll.optionB}">
+                                <button class="vote-btn ${poll.selectedOption === 'B' ? 'selected' : ''}" ${poll.voted ? 'disabled' : ''} onclick="voteExplore('${poll.id}', 'B')">
+                                    ${poll.voted ? `${poll.optionB} (${percB}%)` : poll.optionB}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; font-size: 12px; color: #888; margin-top: 6px;">
+                            <span>📊 ${total} votes ${poll.voted ? '• Voted ✓' : ''}</span>
+                            <span>✨ ${poll.matchRate}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += pollHTML;
+            });
+        }
+
+        function filterCategory(catName, element) {
+            selectedCategory = catName;
+            document.querySelectorAll('#explore-pills .pill').forEach(p => p.classList.remove('active'));
+            element.classList.add('active');
+            renderExplorePolls();
+        }
+
+        function filterExplore(val) {
+            searchQuery = val;
+            renderExplorePolls();
+        }
+
+        function voteFeed(postId, option) {
+            const post = posts.find(p => p.id === postId);
+            if (post && !post.voted) {
+                post.voted = true;
+                post.selectedOption = option;
+                if (option === 'A') post.votesA = (post.votesA || 0) + 1;
+                else post.votesB = (post.votesB || 0) + 1;
+
+                points += 5;
+                saveData();
+                initApp();
+            }
+        }
+
+        function voteExplore(exploreId, option) {
+            const poll = explorePolls.find(p => p.id === exploreId);
+            if (poll && !poll.voted) {
+                poll.voted = true;
+                poll.selectedOption = option;
+                if (option === 'A') poll.votesA = (poll.votesA || 0) + 1;
+                else poll.votesB = (poll.votesB || 0) + 1;
+
+                points += 5;
+                saveData();
+                initApp();
+            }
+        }
+
+        function addComment(btn, postId) {
+            const input = btn.previousElementSibling;
+            if (input.value.trim() !== "") {
+                const post = posts.find(p => p.id === postId);
+                post.comments.push(`<strong>${currentUser}:</strong> ${input.value}`);
+                points += 2;
+                saveData();
+                initApp();
+            }
+        }
+
+        function updatePoints() {
+            localStorage.setItem('pw_points', points);
+            document.getElementById('user-points').innerText = points;
+            document.getElementById('profile-points').innerText = points + " P";
+            
+            let rank = "🌟 Decision Newbie";
+            if (points > 100) rank = "🥈 Vibe Master";
+            if (points > 200) rank = "👑 Decision Legend";
+            document.getElementById('profile-rank').innerText = rank;
+        }
+
+        function openModal() { document.getElementById('pollModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('pollModal').style.display = 'none'; }
+
+        function openFriendsModal() { document.getElementById('friendsModal').style.display = 'flex'; }
+        function closeFriendsModal() { document.getElementById('friendsModal').style.display = 'none'; }
+
+        function createPoll() {
+            const question = document.getElementById('pollQuestion').value;
+            const category = document.getElementById('pollCategory').value;
+
+            if(!question) { return; }
+            
+            const newImg1 = img1Base64 || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
+            const newImg2 = img2Base64 || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400";
+
+            const newPost = {
+                id: 'post-' + Date.now(),
+                author: currentUser,
+                category: category,
+                question: question,
+                img1: newImg1,
+                img2: newImg2,
+                votesA: 0,
+                votesB: 0,
+                voted: false,
+                selectedOption: null,
+                comments: []
+            };
+
+            posts.unshift(newPost);
+            saveData();
+            closeModal();
+            initApp();
+            img1Base64 = ""; img2Base64 = "";
+        }
+
+        function saveData() {
+            localStorage.setItem('pw_posts', JSON.stringify(posts));
+            localStorage.setItem('pw_explore_polls', JSON.stringify(explorePolls));
+        }
+
+        function renderChats() {
+            const chatContainer = document.getElementById('active-chats');
+            chatContainer.innerHTML = `
+                <div class="chat-list-item" onclick="openChat('Nərmin A.')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="avatar">N</div>
+                        <div>
+                            <strong style="font-size:13px;">Nərmin A.</strong>
+                            <div style="font-size: 11px; color: #888;">Tap to continue chat...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startChat(userName) {
+            switchNav('messages', document.querySelectorAll('.nav-item')[3]);
+            openChat(userName);
+        }
+
+        function openChat(userName) {
+            document.getElementById('chat-list').style.display = 'none';
+            document.getElementById('chat-box').style.display = 'block';
+            document.getElementById('chat-user-name').innerText = userName;
+        }
+
+        function closeChat() {
+            document.getElementById('chat-box').style.display = 'none';
+            document.getElementById('chat-list').style.display = 'block';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            if (input.value.trim() !== '') {
+                const msgList = document.getElementById('chat-messages');
+                const newMsg = document.createElement('div');
+                newMsg.className = 'msg sent';
+                newMsg.innerText = input.value;
+                msgList.appendChild(newMsg);
+                input.value = '';
+                msgList.scrollTop = msgList.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
